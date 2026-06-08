@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/lib/auth-client";
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+import { FcGoogle } from "react-icons/fc";
 import toast from "react-hot-toast";
 
 export default function LoginPage() {
@@ -20,14 +21,16 @@ export default function LoginPage() {
     const toastId = toast.loading("Signing in...");
 
     try {
-      await signIn.email({
+      const response = await signIn.email({
         email: formData.email,
         password: formData.password,
       });
+
+      if (response?.error) {
+        throw new Error(response.error.message || "Invalid email or password.");
+      }
       
       toast.success("Welcome back!", { id: toastId });
-      
-      // Forces Next.js Router to reload active session state, then pushes to home
       router.push("/");
       router.refresh();
     } catch (err) {
@@ -37,9 +40,20 @@ export default function LoginPage() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      await signIn.social({
+        provider: "google",
+        callbackURL: "/",
+      });
+    } catch (err) {
+      toast.error("Google authentication failed.");
+    }
+  };
+
   return (
     <main className="min-h-screen w-full bg-[#09090b] text-zinc-100 flex items-center justify-center p-6 relative overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-[400px] rounded-full bg-emerald-500/5 blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-100 w-100 rounded-full bg-emerald-500/5 blur-[120px] pointer-events-none" />
 
       <div className="w-full max-w-md bg-[#121214]/90 border border-zinc-800/80 rounded-2xl p-8 shadow-[0_10px_30px_rgba(0,0,0,0.6)] relative z-10">
         <div className="text-center mb-8">
@@ -102,6 +116,21 @@ export default function LoginPage() {
             {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
+
+        <div className="relative flex py-5 items-center">
+          <div className="grow border-t border-zinc-800"></div>
+          <span className="shrink mx-4 text-zinc-500 text-xs uppercase tracking-wider">Or continue with</span>
+          <div className="grow border-t border-zinc-800"></div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleGoogleSignIn}
+          className="w-full flex items-center justify-center gap-3 bg-zinc-900/80 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-200 font-medium py-3 px-4 rounded-xl transition-all duration-200 text-sm"
+        >
+          <FcGoogle className="text-xl" />
+          <span>Google</span>
+        </button>
 
         <p className="text-center text-sm text-zinc-500 mt-6">
           Don&apos;t have an account?{" "}

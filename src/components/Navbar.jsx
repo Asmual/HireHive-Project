@@ -3,10 +3,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image"; // Image component ইম্পোর্ট করা হয়েছে
 import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
 import toast from "react-hot-toast";
-import { CiLogout } from "react-icons/ci"; // Imported the logout icon
+import { CiLogout } from "react-icons/ci";
+import { FaCircleUser } from "react-icons/fa6";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -55,11 +57,19 @@ export default function Navbar() {
             </svg>
           </button>
 
-          <Link href="/" className="flex items-center gap-2 font-bold text-xl tracking-wide group">
-            <span className="bg-emerald-500 text-zinc-950 px-2.5 py-1 rounded-lg text-lg font-black shadow-[0_0_15px_rgba(16,185,129,0.5)] group-hover:shadow-[0_0_20px_rgba(16,185,129,0.8)] transition-all duration-300">
-              H
-            </span>
-            <span className="text-zinc-100 font-semibold text-lg">
+         
+          <Link href="/" className="flex items-center gap-2.5 font-bold text-xl tracking-wide group">
+            <div className="relative h-8 w-8 transition-transform duration-300 group-hover:scale-105">
+              <Image 
+                src="/HireHive_Logo.svg" 
+                alt="HireHive Logo" 
+                width={32} 
+                height={32} 
+                priority
+                className="drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]"
+              />
+            </div>
+            <span className="text-zinc-100 font-semibold text-lg tracking-normal">
               Hire<span className="text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.4)]">Hive</span>
             </span>
           </Link>
@@ -90,35 +100,30 @@ export default function Navbar() {
             <div className="flex items-center gap-4">
               {session ? (
                 <>
-                  {/* User Section: Avatar + Greeting */}
+                  {/* User Section: Avatar / Icon + Greeting */}
                   <div className="flex items-center gap-2">
-                    {/* User Image / Avatar */}
                     <div className="relative cursor-pointer" title={session.user?.name}>
                       {session.user?.image ? (
                         <img 
                           src={session.user.image} 
-                          alt={session.user.name} 
+                          alt={session.user.name || "User Avatar"} 
                           className="h-7 w-7 rounded-full object-cover border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.2)] hover:border-emerald-400 transition-all"
                         />
                       ) : (
-                        <div className="h-7 w-7 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-xs font-semibold text-emerald-400 drop-shadow-[0_0_4px_rgba(52,211,153,0.3)] hover:border-emerald-400 transition-all">
-                          {session.user?.name?.charAt(0).toUpperCase() || "U"}
-                        </div>
+                        <FaCircleUser className="h-7 w-7 text-emerald-400/80 hover:text-emerald-400 transition-colors drop-shadow-[0_0_6px_rgba(52,211,153,0.4)]" />
                       )}
                     </div>
 
-                    {/* Dynamic Greeting (Hi, First Name) */}
                     <span className="text-sm font-medium text-zinc-300 max-w-30 truncate pl-1">
                       Hi, {session.user?.name ? session.user.name.split(" ")[0] : "User"}
                     </span>
                   </div>
 
-                  {/* Sign Out Button with <CiLogout /> Icon */}
+                  {/* Sign Out Button */}
                   <button
                     onClick={handleSignOut}
                     className="flex items-center gap-1.5 text-sm font-medium text-zinc-400 hover:text-red-400 transition-colors focus:outline-none"
                   >
-                    
                     <CiLogout className="text-base stroke-[0.5]" />
                     <span>Logout</span>
                   </button>
@@ -172,18 +177,15 @@ export default function Navbar() {
                       {session.user?.image ? (
                         <img 
                           src={session.user.image} 
-                          alt={session.user.name} 
+                          alt={session.user.name || "User Avatar"} 
                           className="h-8 w-8 rounded-full object-cover border border-emerald-500/30"
                         />
                       ) : (
-                        <div className="h-8 w-8 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-sm font-semibold text-emerald-400">
-                          {session.user?.name?.charAt(0).toUpperCase() || "U"}
-                        </div>
+                        <FaCircleUser className="h-8 w-8 text-emerald-400/80 drop-shadow-[0_0_6px_rgba(52,211,153,0.4)]" />
                       )}
-                      <span className="truncate">Hi, {session.user?.name}</span>
+                      <span className="truncate">Hi, {session.user?.name || "User"}</span>
                     </div>
                     
-                    {/* Mobile Sign Out Button with Icon */}
                     <button
                       onClick={() => {
                         setIsMenuOpen(false);

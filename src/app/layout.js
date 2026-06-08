@@ -28,12 +28,10 @@ export default function RootLayout({ children }) {
       <body className="min-h-full flex flex-col bg-[#09090b]">
         {/* React Hot Toast Global Provider */}
         <Toaster
-          position="top-center"
+          position="top-right"
           toastOptions={{
-            // Sets default visibility to exactly 3 seconds (3000 milliseconds)
             duration: 3000,
             
-            // Customizing hot-toast to perfectly match your Dark + Green Glow Theme
             style: {
               background: "#121214",
               color: "#e4e4e7",
